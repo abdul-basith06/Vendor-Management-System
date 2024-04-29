@@ -1,9 +1,15 @@
 from django.urls import path
-from .views import VendorListCreateAPIView, VendorRetrieveUpdateDestroyView, PurchaseOrderListCreateAPIView, PurchaseOrderRetrieveUpdateDestroyView
-
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-
-
+from .views import (
+    VendorListCreateAPIView,
+    VendorRetrieveUpdateDestroyView,
+    PurchaseOrderListCreateAPIView,
+    PurchaseOrderRetrieveUpdateDestroyView,
+    PurchaseOrderAcknowledgeView,
+)
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView
+)
 
 urlpatterns = [
     path("token/", TokenObtainPairView.as_view(), name="get-token"),
@@ -12,5 +18,5 @@ urlpatterns = [
     path('vendors/<int:pk>/', VendorRetrieveUpdateDestroyView.as_view(), name='vendor-read-update-delete'),
     path('purchase_orders/', PurchaseOrderListCreateAPIView.as_view(), name='purchase-order-create-list'),
     path('purchase_orders/<int:po_id>/', PurchaseOrderRetrieveUpdateDestroyView.as_view(), name='purchase-order-read-update-delete'),
-
+    path('api/purchase_orders/<int:po_id>/acknowledge/', PurchaseOrderAcknowledgeView.as_view(), name='purchase-order-acknowledge'),
 ]
