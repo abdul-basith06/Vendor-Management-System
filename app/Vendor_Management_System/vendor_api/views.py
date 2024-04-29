@@ -3,6 +3,7 @@ from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
     UpdateAPIView,
+    RetrieveAPIView,
 )
 from rest_framework.response import Response
 from rest_framework import status
@@ -12,7 +13,10 @@ from django.http import Http404
 from django.db.models import Q, F, Avg
 
 from .models import Vendor, PurchaseOrder
-from .serializers import VendorSerializer, PurchaseOrderSerializer
+from .serializers import (
+    VendorSerializer,
+    PurchaseOrderSerializer,
+)
 
 class VendorListCreateAPIView(ListCreateAPIView):
     """
@@ -123,5 +127,24 @@ class PurchaseOrderAcknowledgeView(UpdateAPIView):
 
             vendor.average_response_time = avg_response_time
             vendor.save()
-        
-    
+            
+            
+class VendorPerformanceRetrieveView(RetrieveAPIView):
+    """
+    API endpoint to retrieve a vendor's performance metrics.
+    """
+    permission_classes = [IsAuthenticated]
+    queryset = Vendor.objects.all()
+    serializer_class = VendorSerializer
+    lookup_url_kwarg = 'vendor_id'
+
+    def retrieve(self, request, *args, **kwargs):
+        vendor = self.get_object()
+        serializer = VendorSerializer(vendor)
+
+        serializer.data['on_time_delivery_rate'] = vendor.on_time_delivery_rate
+        serializer.data['quality_rating_avg'] = vendor.quality_rating_avg
+        serializer.data['average_response_time'] = vendor.average_response_time
+        serializer.data['fulfillment_rate'] = vendor.fulfillment_rate
+
+        return Response(serializer.data)

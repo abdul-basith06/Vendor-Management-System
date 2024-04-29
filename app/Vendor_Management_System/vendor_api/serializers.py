@@ -17,11 +17,10 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
         model = PurchaseOrder
         fields = '__all__'  
 
-if HistoricalPerformance: 
-    class HistoricalPerformanceSerializer(serializers.ModelSerializer):
-        """
-        Serializer for the HistoricalPerformance model (optional).
-        """
-        class Meta:
-            model = HistoricalPerformance
-            fields = '__all__'  
+class HistoricalPerformanceSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the HistoricalPerformance model (optional).
+    """
+    class Meta:
+        model = HistoricalPerformance
+        fields = '__all__'  

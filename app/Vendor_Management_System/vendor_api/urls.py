@@ -5,6 +5,7 @@ from .views import (
     PurchaseOrderListCreateAPIView,
     PurchaseOrderRetrieveUpdateDestroyView,
     PurchaseOrderAcknowledgeView,
+    VendorPerformanceRetrieveView,
 )
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -19,4 +20,5 @@ urlpatterns = [
     path('purchase_orders/', PurchaseOrderListCreateAPIView.as_view(), name='purchase-order-create-list'),
     path('purchase_orders/<int:po_id>/', PurchaseOrderRetrieveUpdateDestroyView.as_view(), name='purchase-order-read-update-delete'),
     path('api/purchase_orders/<int:po_id>/acknowledge/', PurchaseOrderAcknowledgeView.as_view(), name='purchase-order-acknowledge'),
+    path('api/vendors/<int:vendor_id>/performance/', VendorPerformanceRetrieveView.as_view(), name='vendor-performance-retrieve'),
 ]
