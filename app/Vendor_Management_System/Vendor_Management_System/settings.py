@@ -149,5 +149,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000", #Frontend localhost
-    "https://example.com",  #Use the original domain during production.
+    "https://example.com",  #Should use the original domain during production.
 ]
