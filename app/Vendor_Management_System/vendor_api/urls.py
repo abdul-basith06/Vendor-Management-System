@@ -19,6 +19,6 @@ urlpatterns = [
     path('vendors/<int:pk>/', VendorRetrieveUpdateDestroyView.as_view(), name='vendor-read-update-delete'),
     path('purchase_orders/', PurchaseOrderListCreateAPIView.as_view(), name='purchase-order-create-list'),
     path('purchase_orders/<int:po_id>/', PurchaseOrderRetrieveUpdateDestroyView.as_view(), name='purchase-order-read-update-delete'),
-    path('api/purchase_orders/<int:po_id>/acknowledge/', PurchaseOrderAcknowledgeView.as_view(), name='purchase-order-acknowledge'),
-    path('api/vendors/<int:vendor_id>/performance/', VendorPerformanceRetrieveView.as_view(), name='vendor-performance-retrieve'),
+    path('purchase_orders/<int:po_id>/acknowledge/', PurchaseOrderAcknowledgeView.as_view(), name='purchase-order-acknowledge'),
+    path('vendors/<int:vendor_id>/performance/', VendorPerformanceRetrieveView.as_view(), name='vendor-performance-retrieve'),
 ]
