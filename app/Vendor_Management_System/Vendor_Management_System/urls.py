@@ -10,9 +10,6 @@ schema_view = get_schema_view(
       title="Vendor Management System",
       default_version='v1',
       description="Vendor Management System API Documentation",
-    #   terms_of_service="https://www.google.com/policies/terms/",
-    #   contact=openapi.Contact(email="contact@xyz.local"),
-    #   license=openapi.License(name="BSD License"),
    ),
    public=True,
    permission_classes=(permissions.AllowAny,),
@@ -21,5 +18,5 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include("vendor_api.urls")),
-    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('api/docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 ]
