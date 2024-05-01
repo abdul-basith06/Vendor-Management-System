@@ -9,10 +9,10 @@ class Vendor(models.Model):
     """
     Model representing a vendor.
     """
-    name = models.CharField(max_length=255)
-    contact_details = models.TextField()
-    address = models.TextField()
-    vendor_code = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=255, blank=False)
+    contact_details = models.TextField(blank=False)
+    address = models.TextField(blank=False)
+    vendor_code = models.CharField(max_length=50, unique=True, blank=False)
 
     # Performance Metrics (calculated fields, not actual database fields)
     on_time_delivery_rate = models.FloatField(default=0.0)
