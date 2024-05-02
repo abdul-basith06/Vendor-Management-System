@@ -14,22 +14,19 @@ from django.contrib.auth.models import User
 from vendor_api.models import Vendor, PurchaseOrder
 from rest_framework_simplejwt.tokens import AccessToken
 
-# from unittest import assertDictContainsSubset
 from django.db import transaction
 
 
 def create_test_user():
-    """Creates a dedicated test user with appropriate permissions."""
+    """
+    Creates a dedicated test user with appropriate permissions.
+    """
     username = "test_user"
-    password = "strong_password"  # Replace with a strong password
-    email = "test@example.com"  # Optional, can be left blank
+    password = "strong_password"
+    email = "test@example.com"
 
     if not User.objects.filter(username=username).exists():
         user = User.objects.create_user(username, email, password)
-        # Add necessary permissions to the user here (if applicable)
-        # For example:
-        # from your_app.models import Vendor
-        # user.has_perm('your_app.add_vendor')  # Grant permission to create vendors
         print(f"Test user '{username}' created successfully.")
     else:
         print(f"Test user '{username}' already exists.")
@@ -41,14 +38,15 @@ if __name__ == "__main__":
 
 @pytest.fixture(scope="function")
 def jwt_token():
-    """Retrieves the test user and generates a JWT token."""
+    """
+    Retrieves the test user and generates a JWT token.
+    """
     user = User.objects.get(username="test_user")
     from rest_framework_simplejwt.tokens import RefreshToken
 
     refresh = RefreshToken.for_user(user)
     token = refresh.access_token
 
-    # Set the Authorization header for the client
     client = APIClient()
     client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
     return client
@@ -56,14 +54,12 @@ def jwt_token():
 
 @pytest.fixture(scope="function")
 def clean_db():
-    """Fixture to ensure a clean database for each test."""
+    """
+    Fixture to ensure a clean database for each test.
+    """
     with transaction.atomic():
-        # Delete data from other tables that have foreign key constraints referencing vendor_api_vendor
-        # For example:
-        # RelatedModel.objects.all().delete()
         PurchaseOrder.objects.all().delete()
 
-        # Delete data from vendor_api_vendor
         from vendor_api.models import Vendor
 
         Vendor.objects.all().delete()
@@ -71,16 +67,6 @@ def clean_db():
     yield
 
     transaction.rollback()
-
-
-# @pytest.fixture(scope="function")
-# def clean_db():
-#   """Fixture to ensure a clean database for each test."""
-#   from django.db import connections
-#   with connections['default'].cursor() as cursor:
-#     cursor.execute("DELETE FROM vendor_api_vendor")
-#   yield  # Test execution happens here
-#   # No further actions needed after the test
 
 
 @pytest.fixture(scope="function")
@@ -114,7 +100,9 @@ def create_vendors():
 
 @pytest.fixture(scope="function")
 def create_purchase_order():
-    """Fixture to create a purchase order for testing."""
+    """
+    Fixture to create a purchase order for testing.
+    """
     vendor = Vendor.objects.create(
         id=1,
         name="Test Vendor",
@@ -139,7 +127,9 @@ def create_purchase_order():
 
 @pytest.mark.usefixtures("clean_db", "jwt_token")
 def test_create_vendor(jwt_token):
-    """Tests creating a vendor with a JWT token."""
+    """
+    Tests creating a vendor with a JWT token.
+    """
     vendor_data = {
         "name": "Test Vendor",
         "contact_details": "123-456-7890",
@@ -153,7 +143,9 @@ def test_create_vendor(jwt_token):
 
 @pytest.mark.usefixtures("clean_db", "jwt_token")
 def test_list_vendors(jwt_token):
-    """Tests listing all vendors."""
+    """
+    Tests listing all vendors.
+    """
     url = reverse("vendor-create-list")
     response = jwt_token.get(url)
     assert response.status_code == status.HTTP_200_OK
@@ -161,7 +153,9 @@ def test_list_vendors(jwt_token):
 
 @pytest.mark.usefixtures("clean_db", "jwt_token")
 def test_retrieve_vendor(jwt_token):
-    """Tests retrieving a specific vendor."""
+    """
+    Tests retrieving a specific vendor.
+    """
     vendor_data = {
         "name": "Test Vendor",
         "contact_details": "123-456-7890",
@@ -185,7 +179,9 @@ def test_retrieve_vendor(jwt_token):
 
 @pytest.mark.usefixtures("clean_db", "jwt_token")
 def test_update_vendor(jwt_token):
-    """Tests updating a specific vendor."""
+    """
+    Tests updating a specific vendor.
+    """
     vendor_data = {
         "name": "Test Vendor",
         "contact_details": "123-456-7890",
@@ -213,7 +209,9 @@ def test_update_vendor(jwt_token):
 
 @pytest.mark.usefixtures("clean_db", "jwt_token")
 def test_delete_vendor(jwt_token):
-    """Tests deleting a specific vendor."""
+    """
+    Tests deleting a specific vendor.
+    """
     vendor_data = {
         "name": "Test Vendor",
         "contact_details": "123-456-7890",
@@ -231,7 +229,9 @@ def test_delete_vendor(jwt_token):
 
 @pytest.mark.usefixtures("clean_db", "jwt_token", "create_vendor")
 def test_create_purchase_order(jwt_token, create_vendor):
-    """Tests creating a purchase order with a JWT token."""
+    """
+    Tests creating a purchase order with a JWT token.
+    """
     vendor_id = create_vendor
 
     po_data = {
@@ -267,7 +267,9 @@ def test_create_purchase_order(jwt_token, create_vendor):
 
 @pytest.mark.usefixtures("clean_db", "jwt_token", "create_vendors")
 def test_list_all_purchase_orders(jwt_token, create_vendors):
-    """Tests listing all purchase orders."""
+    """
+    Tests listing all purchase orders.
+    """
     vendor_id1, vendor_id2 = create_vendors
 
     PurchaseOrder.objects.create(
@@ -298,7 +300,9 @@ def test_list_all_purchase_orders(jwt_token, create_vendors):
 
 @pytest.mark.usefixtures("clean_db", "jwt_token", "create_vendor")
 def test_list_purchase_orders_by_vendor(jwt_token, create_vendor):
-    """Tests listing purchase orders by a specific vendor."""
+    """
+    Tests listing purchase orders by a specific vendor.
+    """
     vendor_id = create_vendor
 
     po_data = {
@@ -335,7 +339,9 @@ def test_list_purchase_orders_by_vendor(jwt_token, create_vendor):
 
 @pytest.mark.usefixtures("clean_db", "jwt_token", "create_purchase_order")
 def test_retrieve_purchase_order(jwt_token, create_purchase_order):
-    """Tests retrieving details of a specific purchase order."""
+    """
+    Tests retrieving details of a specific purchase order.
+    """
     po_id = create_purchase_order
 
     url = reverse("purchase-order-read-update-delete", kwargs={"po_id": po_id})
@@ -361,7 +367,9 @@ def test_retrieve_purchase_order(jwt_token, create_purchase_order):
 
 @pytest.mark.usefixtures("clean_db", "jwt_token")
 def test_retrieve_non_existing_purchase_order(jwt_token):
-    """Tests retrieving details of a non-existing purchase order."""
+    """
+    Tests retrieving details of a non-existing purchase order.
+    """
     non_existing_po_id = 99999
     url = reverse(
         "purchase-order-read-update-delete", kwargs={"po_id": non_existing_po_id}
@@ -464,7 +472,9 @@ def test_retrieve_vendor_performance(jwt_token, create_purchase_order):
 
 @pytest.mark.usefixtures("clean_db", "jwt_token")
 def test_acknowledge_purchase_order(jwt_token, create_purchase_order):
-    """Tests acknowledging a purchase order."""
+    """
+    Tests acknowledging a purchase order.
+    """
     purchase_order_id = create_purchase_order
 
     url = reverse("purchase-order-acknowledge", kwargs={"po_id": purchase_order_id})
