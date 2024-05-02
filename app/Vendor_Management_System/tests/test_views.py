@@ -6,12 +6,15 @@ django.setup()
 
 import pytest
 import datetime
+from django.utils import timezone
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 from django.contrib.auth.models import User
 from vendor_api.models import Vendor, PurchaseOrder
 from rest_framework_simplejwt.tokens import AccessToken
+
+# from unittest import assertDictContainsSubset
 from django.db import transaction
 
 
@@ -432,3 +435,49 @@ def test_delete_purchase_order(jwt_token, create_purchase_order):
 
     assert PurchaseOrder.objects.count() == initial_count - 1
     assert not PurchaseOrder.objects.filter(id=purchase_order_id).exists()
+
+
+@pytest.mark.usefixtures("clean_db", "jwt_token", "create_purchase_order")
+def test_retrieve_vendor_performance(jwt_token, create_purchase_order):
+    """
+    Test retrieving performance metrics of a specific vendor.
+    """
+    purchase_order_id = create_purchase_order
+    vendor_id = PurchaseOrder.objects.get(id=purchase_order_id).vendor_id
+
+    url = reverse("vendor-performance-retrieve", kwargs={"vendor_id": vendor_id})
+    response = jwt_token.get(url)
+
+    assert response.status_code == status.HTTP_200_OK
+
+    print("Response Data:", response.data)
+
+    expected_keys = [
+        "on_time_delivery_rate",
+        "quality_rating_avg",
+        "average_response_time",
+        "fulfillment_rate",
+    ]
+    for key in expected_keys:
+        assert key in response.data
+
+
+@pytest.mark.usefixtures("clean_db", "jwt_token")
+def test_acknowledge_purchase_order(jwt_token, create_purchase_order):
+    """Tests acknowledging a purchase order."""
+    purchase_order_id = create_purchase_order
+
+    url = reverse("purchase-order-acknowledge", kwargs={"po_id": purchase_order_id})
+    response = jwt_token.patch(url)
+
+    assert response.status_code == status.HTTP_200_OK
+
+    purchase_order = PurchaseOrder.objects.get(id=purchase_order_id)
+    assert purchase_order.acknowledgment_date is not None
+    assert (
+        purchase_order.delivery_date
+        == purchase_order.acknowledgment_date + timezone.timedelta(days=5)
+    )
+
+    vendor = purchase_order.vendor
+    assert vendor.average_response_time is not None
