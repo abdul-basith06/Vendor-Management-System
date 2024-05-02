@@ -25,7 +25,7 @@
 #         self.assertEqual(vendor.contact_details, "test@example.com")
 #         self.assertEqual(vendor.address, "123 Main St")
 #         self.assertEqual(vendor.vendor_code, "ABC123")
-                
+
 #     def test_unique_vendor_code(self):
 #         """
 #         Test that vendor code must be unique.
@@ -42,8 +42,8 @@
 #                 contact_details="test2@example.com",
 #                 address="2 Main St",
 #                 vendor_code="UNIQUE_CODE"
-#             )  # Duplicate vendor code 
-            
+#             )  # Duplicate vendor code
+
 #     def test_vendor_str_representation(self):
 #         """
 #         Test the string representation of the Vendor model.
@@ -87,4 +87,4 @@
 #     #         vendor.purchaseorder_set.create(status='pending') for _ in range(3)
 #     #     ]
 #     #     expected_delivery_rate = (len(completed_orders) / (len(completed_orders) + len(pending_orders))) * 100
-#     #     self.assertAlmostEqual(vendor.calculate_on_time_delivery_rate(), expected_delivery_rate, places=2)                
+#     #     self.assertAlmostEqual(vendor.calculate_on_time_delivery_rate(), expected_delivery_rate, places=2)

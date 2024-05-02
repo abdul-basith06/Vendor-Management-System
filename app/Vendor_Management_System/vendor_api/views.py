@@ -39,7 +39,7 @@ class VendorRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
         """
         Override to filter by vendor ID from the URL segment.
         """
-        pk = self.kwargs['vendor_id']
+        pk = self.kwargs['pk']
         try:
             return self.get_queryset().get(pk=pk)
         except Vendor.DoesNotExist:
@@ -58,11 +58,12 @@ class PurchaseOrderListCreateAPIView(ListCreateAPIView):
         """
         Override to filter by vendor (optional parameter in query string).
         """
-        queryset = self.queryset
+        queryset = PurchaseOrder.objects.all()  
         vendor_id = self.request.query_params.get('vendor')
         if vendor_id:
             queryset = queryset.filter(Q(vendor__id=vendor_id))
         return queryset
+
 
     def post(self, request):
         """
