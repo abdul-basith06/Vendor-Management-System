@@ -156,5 +156,13 @@ class VendorPerformanceRetrieveView(RetrieveAPIView):
         serializer.data["quality_rating_avg"] = vendor.quality_rating_avg
         serializer.data["average_response_time"] = vendor.average_response_time
         serializer.data["fulfillment_rate"] = vendor.fulfillment_rate
+        
+        performance_data = {
+            "on_time_delivery_rate": serializer.data["on_time_delivery_rate"],
+            "quality_rating_avg": serializer.data["quality_rating_avg"],
+            "average_response_time": serializer.data["average_response_time"],
+            "fulfillment_rate": serializer.data["fulfillment_rate"],
+        }
 
-        return Response(serializer.data)
+
+        return Response(performance_data)
