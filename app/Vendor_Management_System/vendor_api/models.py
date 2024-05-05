@@ -31,10 +31,10 @@ class Vendor(models.Model):
         """
         completed_orders = PurchaseOrder.objects.filter(vendor=self, status="completed")
         if not completed_orders.count():
-            return None
-
+            return Decimal("0.00")
+        current_time = timezone.now()
         on_time_deliveries = completed_orders.filter(
-            delivery_date__lte=timezone.now()
+            delivery_date__date__gte=current_time
         ).count()
         total_completed_orders = completed_orders.count()
 
@@ -53,7 +53,7 @@ class Vendor(models.Model):
             vendor=self, status="completed", quality_rating__isnull=False
         )
         if not completed_orders.count():
-            return None
+            return Decimal("0.00")
 
         average_rating = completed_orders.aggregate(avg_rating=Avg("quality_rating"))[
             "avg_rating"
@@ -71,10 +71,10 @@ class Vendor(models.Model):
         """
         total_orders = PurchaseOrder.objects.filter(vendor=self).count()
         if not total_orders:
-            return None
+            return Decimal("0.00")
         completed_orders = PurchaseOrder.objects.filter(
             vendor=self, status="completed"
-        ).exclude(issue_details__isnull=True)
+        )
         fulfilled_orders = completed_orders.count()
         if not total_orders:
             return Decimal("0.00")
